@@ -637,8 +637,8 @@
 <button id="music-toggle" class="paused" aria-label="Reproducir música">
   <div class="eq"><span></span><span></span><span></span></div>
 </button>
-<audio id="bg-audio" loop preload="none">
-  <source src="assets/cancion.mp3" type="audio/mpeg">
+<audio id="bg-audio" preload="none">
+  <source src="assets/cancion.mp3#t=15" type="audio/mpeg">
 </audio>
 
 <script>
@@ -646,6 +646,10 @@
   const seal = document.getElementById('seal');
   const envelopeScreen = document.getElementById('envelope-screen');
   const audio = document.getElementById('bg-audio');
+  // La canción empieza (y se repite) desde el segundo 15
+  const SONG_START = 15;
+  audio.addEventListener('loadedmetadata', ()=>{ if(audio.currentTime < SONG_START) audio.currentTime = SONG_START; });
+  audio.addEventListener('ended', ()=>{ audio.currentTime = SONG_START; audio.play(); });
   function openInvitation(){
     envelopeScreen.classList.add('opened');
     if(audio.querySelector('source')){
