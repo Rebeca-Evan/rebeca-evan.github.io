@@ -436,6 +436,38 @@
     letter-spacing:.05em;
   }
 
+  /* ---------- PERSONALIZED GUEST ---------- */
+  .envelope-card .guest{
+    margin-top:22px;
+    padding-top:18px;
+    border-top:1px solid rgba(251,246,236,.18);
+  }
+  .envelope-card .guest-label{
+    font-size:.68rem;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--sage);
+  }
+  .envelope-card .guest-name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.6rem;
+    color:var(--paper);
+    margin-top:6px;
+  }
+  .envelope-card .guest-seats{
+    font-size:.78rem;
+    letter-spacing:.08em;
+    color:rgba(251,246,236,.7);
+    margin-top:4px;
+  }
+  #rsvp .seats-note{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color:var(--forest-deep);
+    margin:8px 0 22px;
+  }
+
   /* ---------- FOOTER MONOGRAM ---------- */
   footer{
     text-align:center;
@@ -505,6 +537,11 @@
     <p class="eyebrow">Se complacen en invitar</p>
     <div class="seal" id="seal" role="button" tabindex="0" aria-label="Abrir invitación">R&E</div>
     <p class="names script">Rebeca &amp; Evan</p>
+    <div class="guest" id="guest-env" hidden>
+      <p class="guest-label">Invitación para</p>
+      <p class="guest-name" id="guest-name"></p>
+      <p class="guest-seats" id="guest-seats-env"></p>
+    </div>
     <p class="hint">Toca el sello para abrir</p>
   </div>
 </div>
@@ -523,8 +560,8 @@
 <!-- ============ STORY ============ -->
 <section id="story" class="reveal">
   <p class="eyebrow" style="display:block;text-align:center;margin-bottom:22px;">Nuestra historia</p>
-  <blockquote>"De todos los caminos que pudimos tomar, estamos agradecidos de que todos nos llevaran el uno al otro. Hoy decidimos caminar el resto juntos."</blockquote>
-  <p class="signoff">— Rebeca &amp; Evan</p>
+  <blockquote>"Por un mañana juntos y una vida entera a tu lado"</blockquote>
+  <p class="signoff">— Rebeca &amp; Evan · 22/10/22</p>
 </section>
 
 <!-- ============ COUNTDOWN ============ -->
@@ -589,6 +626,7 @@
 <section id="rsvp" class="reveal">
   <p class="eyebrow" style="display:block;">Confirma tu asistencia</p>
   <h2 class="section-title" style="margin-top:10px;">RSVP</h2>
+  <p class="seats-note" id="seats-note" hidden></p>
   <a class="rsvp-btn" href="https://wa.me/50254426137?text=Hola%2C%20confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Rebeca%20y%20Evan" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
   <p class="deadline" style="margin-top:14px;">WhatsApp: +502 5442 6137</p>
   <p class="deadline">Por favor confirma antes del 1 de diciembre de 2026</p>
@@ -620,6 +658,25 @@
       }).catch(()=>{});
     }
   }
+  // ---- Personalized guest (?para=Nombre&n=2) ----
+  const params = new URLSearchParams(location.search);
+  const guest = (params.get('para') || '').trim();
+  const seats = parseInt(params.get('n'), 10);
+  if(guest){
+    const seatsText = seats > 1 ? `Hemos reservado ${seats} lugares en su honor`
+                    : seats === 1 ? 'Hemos reservado 1 lugar en tu honor' : '';
+    document.getElementById('guest-name').textContent = guest;
+    document.getElementById('guest-seats-env').textContent = seatsText;
+    document.getElementById('guest-env').hidden = false;
+    if(seatsText){
+      const note = document.getElementById('seats-note');
+      note.textContent = seatsText;
+      note.hidden = false;
+    }
+    const msg = `Hola, soy ${guest} y confirmo mi asistencia a la boda de Rebeca y Evan` + (seats ? ` (${seats} ${seats > 1 ? 'personas' : 'persona'}).` : '.');
+    document.querySelector('.rsvp-btn').href = 'https://wa.me/50254426137?text=' + encodeURIComponent(msg);
+  }
+
   seal.addEventListener('click', openInvitation);
   seal.addEventListener('keypress', e=>{ if(e.key==='Enter' || e.key===' ') openInvitation(); });
 
